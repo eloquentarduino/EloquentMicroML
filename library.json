@@ -1,0 +1,16 @@
+{
+  "name": "EloquentMicroML",
+  "keywords": "tinyml, microml",
+  "description": "Eloquent algorithms of Machine learning for microcontrollers",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eloquentarduino/EloquentMicroML"
+  },
+  "version": "0.0.2",
+  "authors": {
+    "name": "Simone Salerno",
+    "url": "https://github.com/eloquentarduino"
+  },
+  "frameworks": "arduino",
+  "platforms": "*"
+}
