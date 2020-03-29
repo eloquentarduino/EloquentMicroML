@@ -33,7 +33,6 @@ void loop() {
     int fp = 0;
     int fn = 0;
 
-
     int positiveSamples = readSerialNumber("How many positive samples will you use for training? ", POSITIVE_SAMPLES);
 
     if (positiveSamples > POSITIVE_SAMPLES - 1) {
@@ -48,8 +47,8 @@ void loop() {
         negativeSamples = NEGATIVE_SAMPLES - 1;
     }
 
-    time_t start = millis();
     loadDataset(positiveSamples, negativeSamples);
+    time_t start = millis();
     classifier.fit(X_train, y_train, positiveSamples + negativeSamples);
     Serial.print("It took ");
     Serial.print(millis() - start);
