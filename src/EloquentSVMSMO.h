@@ -8,7 +8,7 @@ namespace Eloquent {
 
         /**
          *
-         * @tparam D
+         * @tparam D the number of features of each sample
          */
         template<unsigned int D>
         class SVMSMO {
@@ -25,7 +25,7 @@ namespace Eloquent {
             }
 
             /**
-             *
+             * Misclassification penalty
              * @param C
              */
             void setC(float C) {
@@ -33,7 +33,7 @@ namespace Eloquent {
             }
 
             /**
-             *
+             * Stop criterion tollerance
              * @param tol
              */
             void setTol(float tol) {
@@ -41,7 +41,7 @@ namespace Eloquent {
             }
             
             /**
-             * 
+             * Leave out less influent support vectors
              * @param alphaTol 
              */
             void setAlphaTol(float alphaTol) {
@@ -49,7 +49,7 @@ namespace Eloquent {
             }
 
             /**
-             *
+             * Set an upper bound to the number of iterations
              * @param maxIter
              */
             void setMaxIter(unsigned int maxIter) {
@@ -65,7 +65,7 @@ namespace Eloquent {
             }
 
             /**
-             *
+             * Train the classifier
              * @param X
              * @param y
              * @param N num samples
@@ -161,7 +161,7 @@ namespace Eloquent {
             }
 
             /**
-             *
+             * Classify a new sample
              * @param x
              * @return
              */
@@ -202,7 +202,7 @@ namespace Eloquent {
             float *_alphas;
 
             /**
-             *
+             * Compute the margin of a new sample from the support vectors
              * @param X
              * @param y
              * @param x
