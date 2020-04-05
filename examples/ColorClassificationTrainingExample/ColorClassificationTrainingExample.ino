@@ -10,12 +10,14 @@
 #define MAX_TRAINING_SAMPLES 20
 #define FEATURES_DIM 3
 
+using namespace Eloquent::ML;
+
 
 int numSamples;
 RGB rgb(2, 3, 4);
 float X_train[MAX_TRAINING_SAMPLES][FEATURES_DIM];
 int y_train[MAX_TRAINING_SAMPLES];
-Eloquent::TinyML::SVMSMO<FEATURES_DIM> classifier(linearKernel);
+SVMSMO<FEATURES_DIM> classifier(linearKernel);
 
 
 void setup() {

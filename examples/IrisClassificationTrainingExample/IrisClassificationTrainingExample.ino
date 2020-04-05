@@ -3,27 +3,34 @@
 #define max(a, b) (a) > (b) ? (a) : (b)
 #define abs(x) ((x) > 0 ? (x) : -(x))
 #endif
+#define d(k, v) Serial.print(k); Serial.print(" = "); Serial.println(v);
 
+#define KERNEL_GAMMA 0.001
 #include <EloquentSVMSMO.h>
-#include "iris.h"
+#include "digits.h"
 
 #define TOTAL_SAMPLES (POSITIVE_SAMPLES + NEGATIVE_SAMPLES)
+
+using namespace Eloquent::ML;
+
 
 float X_train[TOTAL_SAMPLES][FEATURES_DIM];
 float X_test[TOTAL_SAMPLES][FEATURES_DIM];
 int y_train[TOTAL_SAMPLES];
 int y_test[TOTAL_SAMPLES];
-Eloquent::TinyML::SVMSMO<FEATURES_DIM> classifier(linearKernel);
+float cache[TOTAL_SAMPLES * TOTAL_SAMPLES];
+SVMSMO<FEATURES_DIM> classifier(linearKernel);
 
 
 void setup() {
     Serial.begin(115200);
-    delay(5000);
+    delay(3000);
 
     // configure classifier
-    classifier.setC(5);
+    classifier.setC(10);
     classifier.setTol(1e-5);
     classifier.setMaxIter(10000);
+//    classifier.setKernelCache(cache);
 }
 
 

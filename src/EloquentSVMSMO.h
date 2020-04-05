@@ -4,7 +4,7 @@
 
 
 namespace Eloquent {
-    namespace TinyML {
+    namespace ML {
 
         /**
          *
@@ -14,7 +14,8 @@ namespace Eloquent {
         class SVMSMO {
         public:
             SVMSMO(kernelFunction kernel) :
-                _kernel(kernel) {
+                    _kernel(kernel),
+                    _cache(NULL) {
                 _params = {
                         .C = 1,
                         .tol = 1e-4,
@@ -39,10 +40,10 @@ namespace Eloquent {
             void setTol(float tol) {
                 _params.tol = tol;
             }
-            
+
             /**
              * Leave out less influent support vectors
-             * @param alphaTol 
+             * @param alphaTol
              */
             void setAlphaTol(float alphaTol) {
                 _params.alphaTol = alphaTol;
@@ -55,13 +56,21 @@ namespace Eloquent {
             void setMaxIter(unsigned int maxIter) {
                 _params.maxIter = maxIter;
             }
-            
+
             /**
-             * 
-             * @param passes 
+             *
+             * @param passes
              */
             void setPasses(unsigned int passes) {
                 _params.passes = passes;
+            }
+
+            /**
+             *
+             * @param cache
+             */
+            void setKernelCache(float *cache) {
+                _cache = cache;
             }
 
             /**
@@ -79,6 +88,16 @@ namespace Eloquent {
                 unsigned int iter = 0;
                 unsigned int passes = 0;
 
+                // cache kernels
+                if (_cache != NULL) {
+                    for (unsigned int i = 0; i < N; i++) {
+                        for (unsigned int j = 0; j < N; j++) {
+                            _cache[i * N + j] = _kernel(X[i], X[j], D);
+                        }
+                    }
+                }
+
+                // train
                 while(passes < _params.passes && iter < _params.maxIter) {
                     float alphaChanged = 0;
 
@@ -111,14 +130,26 @@ namespace Eloquent {
                             if (abs(L - H) < 1e-4)
                                 continue;
 
-                            float eta = 2 * _kernel(X[i], X[j], D) - _kernel(X[i], X[i], D) - _kernel(X[j], X[j], D);
+                            double eta;
+
+                            if (_cache != NULL)
+                                eta = _cache[i * N + j] - _cache[i * N + i] - _cache[j * N + j];
+                            else {
+                                eta = _kernel(X[i], X[j], D) - _kernel(X[i], X[i], D) - _kernel(X[j], X[j], D);
+                            }
 
                             if (eta >= 0)
                                 continue;
 
+                            eta *= 2;
+
                             // compute new alpha_j and clip it inside [0 _params.C]x[0 _params.C] box
                             // then compute alpha_i based on it.
                             float newaj = aj - y[j] * (Ei - Ej) / eta;
+
+//                            d("newaj", newaj);
+//                            d("H", H);
+//                            d("L", L);
 
                             if (newaj > H)
                                 newaj = H;
@@ -190,16 +221,17 @@ namespace Eloquent {
         protected:
             kernelFunction _kernel;
             struct {
-               float C;
-               float tol;
-               float alphaTol;
-               unsigned int maxIter;
-               unsigned int passes;
+                float C;
+                float tol;
+                float alphaTol;
+                unsigned int maxIter;
+                unsigned int passes;
             } _params;
             float _b = 0;
             unsigned int _numSamples;
             int *_y;
             float *_alphas;
+            float *_cache;
 
             /**
              * Compute the margin of a new sample from the support vectors
