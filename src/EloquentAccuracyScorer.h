@@ -26,7 +26,7 @@ namespace Eloquent {
                     _tp++;
                 else if (predicted > 0 && predicted != actual)
                     _fp++;
-                else if (predicted < 0 && predicted == actual)
+                else if (predicted <= 0 && predicted == actual)
                     _tn++;
                 else
                     _fn++;
