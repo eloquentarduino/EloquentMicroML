@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EloquentMLMath.h"
+#include "EloquentAbstractClassifier.h"
 
 namespace Eloquent {
     namespace ML {
@@ -9,19 +10,30 @@ namespace Eloquent {
          * Stochastic gradient descent
          */
         template<unsigned int num_features>
-        class SGD {
+        class SGD : public AbstractClassifier<num_features> {
         public:
             /**
              *
              * @param alpha
              */
-            SGD(float alpha = 0.01) :
+            SGD(float alpha = 0.001) :
                     _alpha(alpha) {
                 _params.normalizeAlpha = false;
                 _params.momentum = 0;
 
                 for (unsigned int i = 0; i < num_features + 1; i++)
                     _weights[i] = _updates[i] = 0;
+            }
+
+            /**
+             *
+             * @param param
+             * @param value
+             */
+            void set(const char *param, float value) {
+                this->setParam(param, "alpha", &_alpha, value);
+                this->setParam(param, "momentum", &_params.momentum, value);
+                this->setParam(param, "normalize", &_params.normalizeAlpha, value > 0);
             }
 
             /**

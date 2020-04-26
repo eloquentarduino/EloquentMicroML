@@ -6,6 +6,8 @@
 
 using namespace Eloquent::ML;
 
+float m = 0;
+
 
 void setup() {
     Serial.begin(115200);
@@ -19,7 +21,7 @@ void loop() {
     SGD<FEATURES_DIM> clf;
     AccuracyScorer scorer;
 
-    clf.momentum(0.5);
+    clf.momentum(m);
     trainSamples = readSerialNumber("How many samples will you use as training?", DATASET_SIZE - 2);
     retrainingCycles = readSerialNumber("How many times will you cycle through the training samples?", 100);
 
@@ -53,6 +55,8 @@ void loop() {
     Serial.print("% out of ");
     Serial.print(scorer.support());
     Serial.println(" predictions");
+
+    m += 0.5;
 }
 
 /**
