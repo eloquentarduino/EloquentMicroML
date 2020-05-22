@@ -32,6 +32,18 @@ namespace Eloquent {
 
             }
 
+            /**
+             * Train on the given dataset
+             * @tparam numSamples
+             * @param X
+             * @param y
+             */
+            template<uint16_t numSamples>
+            void fit(float X[numSamples][num_features], int y[numSamples]) {
+                for (uint16_t i = 0; i < numSamples; i++)
+                    fitOne(X[i], y[i]);
+            }
+
         protected:
             /**
              *

@@ -7,8 +7,8 @@
 namespace Eloquent {
     namespace ML {
 
-        template<unsigned int features_dim>
-        class PassiveAggressive : public AbstractClassifier<features_dim> {
+        template<unsigned int numFeatures>
+        class PassiveAggressive : public AbstractClassifier<numFeatures> {
         public:
             /**
              *
@@ -16,7 +16,7 @@ namespace Eloquent {
             PassiveAggressive() {
                 _params.C = 0.01;
 
-                for (unsigned int i = 0; i < features_dim; i++)
+                for (unsigned int i = 0; i < numFeatures; i++)
                     _weights[i] = 0;
             }
 
@@ -34,14 +34,14 @@ namespace Eloquent {
              * @param label
              * @return
              */
-            void fitOne(float x[features_dim], int label) {
+            void fitOne(float x[numFeatures], int label) {
                 label = label > 0 ? 1 : -1;
 
-                float loss = max(0, 1 - (label * dot<features_dim>(x, _weights)));
-                float xnorm = dot<features_dim>(x, x);
+                float loss = max(0, 1 - (label * dot<numFeatures>(x, _weights)));
+                float xnorm = dot<numFeatures>(x, x);
                 float tau = loss / (xnorm + (1 / (2 * _params.C))) * label;
 
-                for (unsigned int i = 0; i < features_dim; i++)
+                for (unsigned int i = 0; i < numFeatures; i++)
                     _weights[i] += tau * x[i];
             }
 
@@ -50,8 +50,8 @@ namespace Eloquent {
              * @param x
              * @return
              */
-            int predict(float x[features_dim]) {
-                return dot<features_dim>(x, _weights) > 0 ? 1 : -1;
+            int predict(float x[numFeatures]) {
+                return dot<numFeatures>(x, _weights) > 0 ? 1 : 0;
             }
 
             /**
@@ -67,7 +67,7 @@ namespace Eloquent {
             struct {
                 float C;
             } _params;
-            float _weights[features_dim];
+            float _weights[numFeatures];
         };
     }
 }
