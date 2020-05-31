@@ -44,6 +44,22 @@ namespace Eloquent {
              *
              * @return
              */
+            float precision() {
+                return (1.0f * _tp) / (_tp + _fp);
+            }
+
+            /**
+             *
+             * @return
+             */
+            float recall() {
+                return (1.0f * _tp) / (_tp + _fn);
+            }
+
+            /**
+             *
+             * @return
+             */
             unsigned int support() {
                 return _tp + _tn + _fp + _fn;
             }
