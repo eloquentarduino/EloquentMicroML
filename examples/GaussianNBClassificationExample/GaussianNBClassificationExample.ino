@@ -1,5 +1,4 @@
-#include "DecisionTreeClassifier.h"
-#include "RandomForestClassifier.h"
+#include "GaussianNB.h"
 #include "IrisTestSet.h"
 
 
@@ -13,8 +12,7 @@ void setup() {
 }
 
 void loop() {
-    RandomForestClassifier clf;
-    //DecisionTreeClassifier clf;
+    GaussianNB clf;
     TestSet testSet;
 
     testSet.test(clf);
