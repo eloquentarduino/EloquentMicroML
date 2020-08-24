@@ -61,7 +61,6 @@ void loop() {
         Serial.println("Done");
     }
     else if (command == "predict") {
-        int label;
         float x[FEATURES_DIM];
 
         getFeatures(x);

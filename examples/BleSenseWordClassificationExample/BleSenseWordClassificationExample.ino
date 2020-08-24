@@ -1,22 +1,18 @@
 #include "EloquentML.h"
 #include "Mic.h"
-#include "SVM.h"
-#include "RandomForest.h"
-#include "GaussianNB.h"
+#include "Classifier.h"
 
+// tune as per your needs
 #define SAMPLES 64
-#define GAIN
+#define GAIN (1/50)
+#define SOUND_THRESHOLD 2000
 
-using namespace Eloquent::ML::Data;
-using namespace Eloquent::ML::Data::Operators;
 using namespace Eloquent::ML::Port;
 
 
-Array<SAMPLES> features;
+float features[SAMPLES];
 Mic mic;
 SVM clf;
-// RandomForest clf;
-// GaussianNB clf;
 
 
 /**
@@ -26,7 +22,6 @@ void setup() {
     Serial.begin(115200);
     PDM.onReceive(onAudio);
     mic.begin();
-    features.map(new Quantize(GAIN));
     delay(3000);
 }
 
@@ -36,10 +31,16 @@ void setup() {
  */
 void loop() {
     if (record()) {
-        features.printTo(Serial);
-        classify();
+        // print features
+        for (int i = 0; i < SAMPLES; i++) {
+            Serial.print(features[i], 6);
+            Serial.print(i == SAMPLES - 1 ? '\n' : ',');
+        }
 
-        features.clear();
+        // un-comment when you have your model exported
+//        Serial.print("You said: ");
+//        Serial.println(clf.predictLabel(features));
+
         delay(500);
     }
 
@@ -59,28 +60,17 @@ void onAudio() {
  * Read given number of samples from mic
  */
 bool record() {
-    if (mic.hasData() && mic.data() > 1500) {
-        while (!features.isFull()) {
-            if (mic.hasData()) {
-                features.insert(mic.data());
-                mic.reset();
-            }
+    if (mic.hasData() && mic.data() > SOUND_THRESHOLD) {
+
+        for (int i = 0; i < SAMPLES; i++) {
+            while (!mic.hasData())
+                delay(1);
+
+            features[i] = mic.pop() * GAIN;
         }
 
         return true;
     }
 
     return false;
-}
-
-
-/**
- * Run ML classification
- */
-void classify() {
-    float input[SAMPLES];
-
-    features.toArray(input);
-    Serial.print("You said: ");
-    Serial.println(clf.predictLabel(input));
 }
